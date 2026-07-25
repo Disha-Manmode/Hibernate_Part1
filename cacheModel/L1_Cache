@@ -1,0 +1,50 @@
+package cacheModel;
+
+import EntityClass.StudentEntity;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+public class L1_Cache {
+
+    public static void main(String args[]){
+        boolean flag=false;
+        Transaction transaction=null;
+
+        SessionFactory sessionFactory=new Configuration().configure()
+                .addAnnotatedClass(L1_Cache.class).buildSessionFactory();
+
+        Session session=sessionFactory.openSession();
+        Session session1=sessionFactory.openSession();
+
+        try{
+           
+            StudentEntity student = session.get(StudentEntity.class, 2);//find
+            System.out.println(student);
+
+            StudentEntity student1 = session.get(StudentEntity.class, 2);//find
+            System.out.println(student1);
+
+            transaction = session1.beginTransaction();
+            StudentEntity student2 = session1.get(StudentEntity.class, 2);//find
+            System.out.println(student2);
+
+            StudentEntity student3 = session1.get(StudentEntity.class, 2);//find
+            System.out.println(student3);
+            
+        } catch(HibernateException e)
+
+        {
+            e.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally{
+            session.close();
+            sessionFactory.close();
+        }
+    }
+}
